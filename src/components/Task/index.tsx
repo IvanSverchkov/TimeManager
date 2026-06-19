@@ -16,6 +16,7 @@ type CardProps = {
   notes: string;
   status: TaskStatus;
   buttons?: React.ReactNode;
+  onDelete: () => void;
   onToggle: () => void;
   onUpdate?: (task: OmitExcept<Task, "id">) => void;
 };
@@ -37,7 +38,7 @@ export function TaskComponent(props: CardProps) {
         <DisplayInput
           className={styles.titleInput}
           placeholder="Title"
-          size={17}
+          size={16}
           value={props.text}
           weight={650}
           onChange={(value) => {
@@ -47,7 +48,7 @@ export function TaskComponent(props: CardProps) {
         <DisplayInput
           className={styles.notesInput}
           placeholder="Notes"
-          size={13}
+          size={12}
           value={props.notes}
           onChange={(value) => {
             props.onUpdate?.({ id: props.id, notes: value });
@@ -88,6 +89,14 @@ export function TaskComponent(props: CardProps) {
       </button>
 
       <div className={styles.adjustments}>{props.buttons}</div>
+
+      <button
+        className={styles.delete}
+        onClick={props.onDelete}
+        type="button"
+      >
+        <Icon name="trash" size={25} />
+      </button>
     </article>
   );
 }

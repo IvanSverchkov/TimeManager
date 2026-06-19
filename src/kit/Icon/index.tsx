@@ -7,6 +7,7 @@ export type IconName =
   | "play"
   | "plus"
   | "target"
+  | "trash"
   | "trend";
 
 type IconProps = {
@@ -54,6 +55,14 @@ export function Icon({ name, size = 24, className }: IconProps) {
         <circle cx="12" cy="12" r="8" />
         <circle cx="12" cy="12" r="3" />
         <path d="M12 2v2M12 20v2" />
+      </>
+    ),
+    trash: (
+      <>
+        <path d="M4 7h16" />
+        <path d="M9 7V4h6v3" />
+        <path d="m6.5 7 .8 13h9.4l.8-13" />
+        <path d="M10 11v5M14 11v5" />
       </>
     ),
     trend: <path d="m4 16 5-5 4 3 7-8M16 6h4v4" />,

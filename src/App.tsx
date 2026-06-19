@@ -57,6 +57,12 @@ export const App = memo(function App() {
     );
   }, []);
 
+  const deleteTask = useCallback((id: number) => {
+    setTasks((currentTasks) =>
+      currentTasks.filter((currentTask) => currentTask.id !== id),
+    );
+  }, []);
+
   const handleActiveChange = useCallback((id: number, isActive: boolean) => {
     setRunningTaskIds((currentIds) => {
       const nextIds = new Set(currentIds);
@@ -234,6 +240,7 @@ export const App = memo(function App() {
                     name={task.name}
                     notes={task.notes}
                     onActiveChange={handleActiveChange}
+                    onDelete={deleteTask}
                     onLiveSecondsChange={handleLiveSecondsChange}
                     onUpdate={updateTask}
                     seconds={task.seconds}
