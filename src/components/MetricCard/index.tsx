@@ -12,7 +12,14 @@ export type MetricCardProps = {
   progress?: number;
 };
 
-export function MetricCard({ icon, tone, label, value, suffix, progress }: MetricCardProps) {
+export function MetricCard({
+  icon,
+  tone,
+  label,
+  value,
+  suffix,
+  progress,
+}: MetricCardProps) {
   return (
     <article className={styles.metricCard}>
       <div className={`${styles.metricIcon} ${styles[tone]}`}>

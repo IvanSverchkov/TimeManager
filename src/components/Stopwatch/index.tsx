@@ -8,7 +8,6 @@ import type { OmitExcept } from "@utils/types";
 
 type StopwatchProps = {
   id: number;
-  order: number;
   name: string;
   seconds: number;
   notes: string;
@@ -41,10 +40,6 @@ export class Stopwatch extends React.Component<StopwatchProps, State> {
     };
   }
 
-  componentDidMount() {
-    window.addEventListener("keydown", this.onKeyDown);
-  }
-
   componentDidUpdate(previousProps: StopwatchProps) {
     if (
       !this.state.isRunning &&
@@ -56,7 +51,6 @@ export class Stopwatch extends React.Component<StopwatchProps, State> {
   }
 
   componentWillUnmount() {
-    window.removeEventListener("keydown", this.onKeyDown);
     window.clearInterval(this.timerId);
     this.props.onActiveChange?.(this.props.id, false);
     this.props.onLiveSecondsChange?.(this.props.id, 0);
@@ -123,29 +117,6 @@ export class Stopwatch extends React.Component<StopwatchProps, State> {
     else this.startTimer();
   };
 
-  onKeyDown = (event: KeyboardEvent) => {
-    if (
-      event.metaKey ||
-      event.ctrlKey ||
-      event.altKey ||
-      event.target instanceof HTMLInputElement ||
-      event.target instanceof HTMLSelectElement ||
-      event.target instanceof HTMLTextAreaElement
-    ) {
-      return;
-    }
-
-    const digitMatch = event.code.match(/^Digit([0-9])$/);
-    if (!digitMatch) return;
-
-    const targetedNumber = Number(digitMatch[1]) + (event.shiftKey ? 9 : 0);
-    if (targetedNumber === this.props.order) {
-      this.toggleTimer();
-    } else if (this.state.isRunning) {
-      this.pauseTimer();
-    }
-  };
-
   render() {
     const displayedSeconds = this.state.seconds + this.state.newSeconds;
 
@@ -153,7 +124,6 @@ export class Stopwatch extends React.Component<StopwatchProps, State> {
       <div hidden={this.props.hidden}>
         <TaskComponent
           id={this.props.id}
-          order={this.props.order}
           isActive={this.state.isRunning}
           text={this.props.name}
           seconds={displayedSeconds}
@@ -164,12 +134,12 @@ export class Stopwatch extends React.Component<StopwatchProps, State> {
           buttons={
             <>
               <Button
-                text="−10m"
+                text="-10m"
                 disabled={this.state.isRunning}
                 onClick={() => this.pauseTimer(-60 * 10)}
               />
               <Button
-                text="−1m"
+                text="-1m"
                 disabled={this.state.isRunning}
                 onClick={() => this.pauseTimer(-60)}
               />

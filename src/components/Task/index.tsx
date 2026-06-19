@@ -10,7 +10,6 @@ import styles from "./Task.module.scss";
 
 type CardProps = {
   id: number;
-  order: number;
   isActive: boolean;
   text: string;
   seconds: number;
@@ -34,11 +33,6 @@ export function TaskComponent(props: CardProps) {
     <article
       className={`${styles.taskCard} ${props.isActive ? styles.active : ""}`}
     >
-      <div className={styles.shortcut}>
-        <span>⌘</span>
-        {renderHotKeyHint(props.order)}
-      </div>
-
       <div className={styles.description}>
         <DisplayInput
           className={styles.titleInput}
@@ -96,9 +90,4 @@ export function TaskComponent(props: CardProps) {
       <div className={styles.adjustments}>{props.buttons}</div>
     </article>
   );
-}
-
-function renderHotKeyHint(id: number): string {
-  if (id < 10) return String(id);
-  return `S${id - 9}`;
 }

@@ -8,7 +8,12 @@ type FilterButtonProps = {
   onClick: () => void;
 };
 
-export function FilterButton({ active, count, label, onClick }: FilterButtonProps) {
+export function FilterButton({
+  active,
+  count,
+  label,
+  onClick,
+}: FilterButtonProps) {
   return (
     <button
       className={cn(

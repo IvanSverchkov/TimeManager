@@ -74,11 +74,8 @@ export const App = memo(function App() {
   }, []);
 
   const onAddStopwatchClick = () => {
-    const name = prompt("Task title");
-    if (name === null) return;
-
     createTask({
-      name: name.trim(),
+      name: "",
       notes: "",
       seconds: 0,
       status: "todo",
@@ -223,7 +220,7 @@ export const App = memo(function App() {
             </div>
 
             <div className={styles.cardContainer}>
-              {tasks.map((task, index) => {
+              {tasks.map((task) => {
                 const isHidden =
                   (filter === "active" && !runningTaskIds.has(task.id)) ||
                   (filter === "done" && task.status !== "done");
@@ -239,7 +236,6 @@ export const App = memo(function App() {
                     onActiveChange={handleActiveChange}
                     onLiveSecondsChange={handleLiveSecondsChange}
                     onUpdate={updateTask}
-                    order={index + 1}
                     seconds={task.seconds}
                     status={task.status}
                   />
