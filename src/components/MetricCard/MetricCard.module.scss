@@ -1,0 +1,80 @@
+.metricCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-height: 150px;
+  padding: 24px 20px;
+  border: 1px solid #e3e7ee;
+  border-radius: 16px;
+  background: #fff;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+
+  &:hover {
+    border-color: #d5dbe7;
+    box-shadow: 0 12px 30px rgb(35 46 76 / 7%);
+    transform: translateY(-2px);
+  }
+}
+
+.metricIcon {
+  display: grid;
+  flex: 0 0 46px;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.metricBody {
+  min-width: 0;
+  padding-top: 2px;
+
+  > p {
+    margin-bottom: 12px;
+    overflow: hidden;
+    color: #4b556b;
+    font-size: 14px;
+    font-weight: 550;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.metricValue {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  white-space: nowrap;
+
+  strong {
+    color: #111827;
+    font-size: clamp(22px, 2vw, 30px);
+    font-weight: 620;
+    letter-spacing: -0.035em;
+  }
+
+  span {
+    color: #667085;
+    font-size: 13px;
+  }
+}
+
+.blue {
+  color: #2563eb;
+  background: #edf4ff;
+}
+
+.green {
+  color: #20a44b;
+  background: #edf9f0;
+}
+
+.purple {
+  color: #6c4bea;
+  background: #f3f0ff;
+}
+
+.red {
+  color: #ef4444;
+  background: #fff0f0;
+}

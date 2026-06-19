@@ -1,0 +1,27 @@
+.button {
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid #e2e6ed;
+  border-radius: 9px;
+  color: #475467;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 150ms ease, color 150ms ease, background 150ms ease,
+    transform 150ms ease;
+
+  &:hover:not(:disabled) {
+    border-color: #a9c2fa;
+    color: #2563eb;
+    background: #f8faff;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    color: #a7afbe;
+    background: #f7f8fa;
+    cursor: not-allowed;
+  }
+}

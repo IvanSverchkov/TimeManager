@@ -1,0 +1,29 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 94px;
+  height: 42px;
+  padding: 0 17px;
+  border: 1px solid #e2e6ed;
+  border-radius: 12px;
+  color: #667085;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+
+  strong {
+    font-weight: 500;
+  }
+
+  &:hover {
+    border-color: #b9cdfd;
+    color: #2563eb;
+  }
+}
+
+.active {
+  border-color: #8cb3ff;
+  color: #2563eb;
+  background: #f7faff;
+}

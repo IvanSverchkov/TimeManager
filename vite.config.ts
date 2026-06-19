@@ -1,6 +1,9 @@
-import { basename } from 'node:path'
+import { basename, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+
+const projectRoot = fileURLToPath(new URL('.', import.meta.url))
 
 function getCssHash(css: string) {
   let hash = 5381
@@ -30,6 +33,14 @@ function generateScopedName(className: string, filename: string, css: string) {
 
 export default defineConfig({
   base: '/TimeManager/',
+  resolve: {
+    alias: {
+      '@state': resolve(projectRoot, 'src/state'),
+      '@kit': resolve(projectRoot, 'src/kit'),
+      '@components': resolve(projectRoot, 'src/components'),
+      '@utils': resolve(projectRoot, 'src/utils'),
+    },
+  },
   css: {
     modules: {
       generateScopedName,

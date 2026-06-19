@@ -1,0 +1,27 @@
+.input {
+  display: block;
+  padding: 2px 4px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+  outline: none;
+  background: transparent;
+  width: auto;
+  min-width: 100px;
+  max-width: 100%;
+  field-sizing: content;
+
+  &::placeholder {
+    font-weight: 100;
+    color: rgb(217, 217, 217);
+  }
+
+  &:placeholder-shown {
+    border-color: rgb(232, 232, 232);
+  }
+
+  &:focus {
+    border-color: #8cb3ff;
+    background: #f8faff;
+  }
+}

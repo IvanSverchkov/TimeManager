@@ -1,0 +1,22 @@
+.copyButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 50px;
+  padding: 0 19px;
+  border: 1px solid #dfe3eb;
+  border-radius: 12px;
+  color: #344054;
+  background: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+
+  &:hover {
+    border-color: #b7c9ee;
+    color: #2563eb;
+    background: #f9fbff;
+  }
+}
+
