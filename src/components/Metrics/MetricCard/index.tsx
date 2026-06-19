@@ -2,7 +2,6 @@ import { Icon, type IconName } from "@kit/Icon";
 
 import styles from "./MetricCard.module.scss";
 
-
 export type MetricCardProps = {
   icon: IconName;
   tone: "blue" | "green" | "purple" | "red";
@@ -32,10 +31,7 @@ export function MetricCard({
           {suffix && <span>{suffix}</span>}
         </div>
         {progress !== undefined && (
-          <div
-            className={styles.progress}
-            role="progressbar"
-          >
+          <div className={styles.progress} role="progressbar">
             <span style={{ width: `${progress}%` }} />
           </div>
         )}

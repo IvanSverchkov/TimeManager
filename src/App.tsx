@@ -1,6 +1,8 @@
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 
 import { CopyButton } from "@components/CopyButton";
+import { FilterButton } from "@components/FilterButton";
+import { Metrics } from "@components/Metrics";
 import { Stopwatch } from "@components/Stopwatch";
 import { Icon } from "@kit/Icon";
 import {
@@ -9,17 +11,12 @@ import {
   type Task,
   type TaskStatus,
 } from "@state/Task";
-import { formatDuration, getDateKey, getWeekDateKeys } from "@utils/time";
+import { getDateKey } from "@utils/time";
 import type { OmitExcept } from "@utils/types";
 
 import styles from "./App.module.scss";
-import { MetricCard, type MetricCardProps } from "@components/MetricCard";
-import { FilterButton } from "@components/FilterButton";
 
 type TimerFilter = "all" | "active" | "done";
-
-const WORK_DAY_SECONDS = 8 * 60 * 60;
-const WORK_WEEK_SECONDS = 40 * 60 * 60;
 
 export const App = memo(function App() {
   const [tasks, setTasks] = useState<Array<Task>>(() => {
@@ -85,44 +82,6 @@ export const App = memo(function App() {
     });
   };
 
-  const metrics = useMemo(() => {
-    const todayKey = getDateKey();
-    const weekKeys = new Set(getWeekDateKeys());
-    let totalSeconds = 0;
-    let todaySeconds = 0;
-    let weekSeconds = 0;
-    let focusedSeconds = 0;
-
-    tasks.forEach((task) => {
-      const liveTaskSeconds = liveSeconds[task.id] ?? 0;
-      const taskTotal = task.seconds + liveTaskSeconds;
-      totalSeconds += taskTotal;
-      todaySeconds += (task.dailySeconds[todayKey] ?? 0) + liveTaskSeconds;
-
-      Object.entries(task.dailySeconds).forEach(([dateKey, seconds]) => {
-        if (weekKeys.has(dateKey)) weekSeconds += seconds;
-      });
-      weekSeconds += liveTaskSeconds;
-
-      if (task.status !== "todo") focusedSeconds += taskTotal;
-    });
-
-    const completedTasks = tasks.filter((task) => task.status === "done").length;
-    const todayProgress = Math.min(100, (todaySeconds / WORK_DAY_SECONDS) * 100);
-    const focusRate = totalSeconds === 0
-      ? 0
-      : Math.round((focusedSeconds / totalSeconds) * 100);
-
-    return {
-      completedTasks,
-      focusRate,
-      todayProgress,
-      todaySeconds,
-      totalSeconds,
-      weekRemaining: Math.max(0, WORK_WEEK_SECONDS - weekSeconds),
-    };
-  }, [liveSeconds, tasks]);
-
   const activeCount = runningTaskId === null ? 0 : 1;
   const doneCount = tasks.filter((task) => task.status === "done").length;
   const visibleTaskCount = tasks.filter((task) => {
@@ -130,42 +89,6 @@ export const App = memo(function App() {
     if (filter === "done") return task.status === "done";
     return true;
   }).length;
-
-  const metricCards: Array<MetricCardProps> = [
-    {
-      icon: "clock",
-      tone: "blue",
-      label: "Total tracked",
-      value: formatDuration(metrics.totalSeconds),
-    },
-    {
-      icon: "calendar",
-      tone: "green",
-      label: "Today",
-      value: formatDuration(metrics.todaySeconds),
-      suffix: "of 8h",
-      progress: metrics.todayProgress,
-    },
-    {
-      icon: "trend",
-      tone: "purple",
-      label: "Week remaining",
-      value: formatDuration(metrics.weekRemaining),
-    },
-    {
-      icon: "check",
-      tone: "green",
-      label: "Completed",
-      value: `${metrics.completedTasks} / ${tasks.length}`,
-      suffix: "tasks",
-    },
-    {
-      icon: "target",
-      tone: "red",
-      label: "Focus rate",
-      value: `${metrics.focusRate}%`,
-    },
-  ];
 
   return (
     <main className={styles.page}>
@@ -190,11 +113,7 @@ export const App = memo(function App() {
         </header>
 
         <div className={styles.content}>
-          <section className={styles.metrics}>
-            {metricCards.map((metric) => (
-              <MetricCard key={metric.label} {...metric} />
-            ))}
-          </section>
+          <Metrics liveSeconds={liveSeconds} tasks={tasks} />
 
           <section className={styles.timersSection}>
             <div className={styles.timersHeader}>

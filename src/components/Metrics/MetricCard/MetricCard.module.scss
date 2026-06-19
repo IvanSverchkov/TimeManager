@@ -59,6 +59,23 @@
   }
 }
 
+.progress {
+  width: min(190px, 100%);
+  height: 7px;
+  margin-top: 16px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #ebedf2;
+
+  span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #37b65b;
+    transition: width 300ms ease;
+  }
+}
+
 .blue {
   color: #2563eb;
   background: #edf4ff;
