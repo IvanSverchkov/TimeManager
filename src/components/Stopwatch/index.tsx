@@ -8,6 +8,7 @@ import type { OmitExcept } from "@utils/types";
 
 type StopwatchProps = {
   id: number;
+  isActive: boolean;
   name: string;
   seconds: number;
   notes: string;
@@ -42,6 +43,15 @@ export class Stopwatch extends React.Component<StopwatchProps, State> {
   }
 
   componentDidUpdate(previousProps: StopwatchProps) {
+    if (
+      previousProps.isActive &&
+      !this.props.isActive &&
+      this.state.isRunning
+    ) {
+      this.pauseTimer();
+      return;
+    }
+
     if (
       !this.state.isRunning &&
       previousProps.seconds !== this.props.seconds &&

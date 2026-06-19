@@ -28,9 +28,7 @@ export const App = memo(function App() {
     return state.tasks.map(normalizeTask);
   });
   const [filter, setFilter] = useState<TimerFilter>("all");
-  const [runningTaskIds, setRunningTaskIds] = useState<Set<number>>(
-    () => new Set(),
-  );
+  const [runningTaskId, setRunningTaskId] = useState<number | null>(null);
   const [liveSeconds, setLiveSeconds] = useState<Record<number, number>>({});
 
   useEffect(() => {
@@ -64,11 +62,9 @@ export const App = memo(function App() {
   }, []);
 
   const handleActiveChange = useCallback((id: number, isActive: boolean) => {
-    setRunningTaskIds((currentIds) => {
-      const nextIds = new Set(currentIds);
-      if (isActive) nextIds.add(id);
-      else nextIds.delete(id);
-      return nextIds;
+    setRunningTaskId((currentId) => {
+      if (isActive) return id;
+      return currentId === id ? null : currentId;
     });
   }, []);
 
@@ -127,10 +123,10 @@ export const App = memo(function App() {
     };
   }, [liveSeconds, tasks]);
 
-  const activeCount = runningTaskIds.size;
+  const activeCount = runningTaskId === null ? 0 : 1;
   const doneCount = tasks.filter((task) => task.status === "done").length;
   const visibleTaskCount = tasks.filter((task) => {
-    if (filter === "active") return runningTaskIds.has(task.id);
+    if (filter === "active") return runningTaskId === task.id;
     if (filter === "done") return task.status === "done";
     return true;
   }).length;
@@ -228,7 +224,7 @@ export const App = memo(function App() {
             <div className={styles.cardContainer}>
               {tasks.map((task) => {
                 const isHidden =
-                  (filter === "active" && !runningTaskIds.has(task.id)) ||
+                  (filter === "active" && runningTaskId !== task.id) ||
                   (filter === "done" && task.status !== "done");
 
                 return (
@@ -236,6 +232,7 @@ export const App = memo(function App() {
                     dailySeconds={task.dailySeconds}
                     hidden={isHidden}
                     id={task.id}
+                    isActive={runningTaskId === task.id}
                     key={task.id}
                     name={task.name}
                     notes={task.notes}
