@@ -109,19 +109,30 @@ export const App = memo(function App() {
     [commitTasks],
   );
 
-  const onAddStopwatchClick = () => {
+  const onAddTimerClick = () => {
     createTask({
       name: "",
       notes: "",
       estimatedHours: 0,
-      storyPoints: 0,
+      seconds: 0,
+      dailySeconds: {},
+    });
+  };
+
+  const onAddTaskClick = () => {
+    createTask({
+      name: "",
+      notes: "",
+      estimatedHours: 0,
       seconds: 0,
       status: "todo",
       dailySeconds: {},
     });
   };
 
-  const visibleTaskCount = tasks.filter(
+  const timers = tasks.filter((task) => task.status === undefined);
+  const taskTimers = tasks.filter((task) => task.status !== undefined);
+  const visibleTaskCount = taskTimers.filter(
     (task) => filter === "all" || task.status === filter,
   ).length;
 
@@ -130,47 +141,89 @@ export const App = memo(function App() {
       <section className={styles.appShell}>
         <header className={styles.header}>
           <h1>TimeManager</h1>
-          <div className={styles.headerActions}>
-            <CopyButton seconds={tasks.map((task) => task.seconds)} />
-            <button
-              className={styles.addButton}
-              onClick={onAddStopwatchClick}
-              type="button"
-            >
-              <Icon name="plus" size={22} />
-              <span>New timer</span>
-            </button>
-          </div>
         </header>
 
         <div className={styles.content}>
           <Metrics tasks={tasks} />
+
           <section className={styles.timersSection}>
-            <div className={styles.timersHeader}>
-              <h2>Timers</h2>
-              <div className={styles.filters}>
-                <FilterButton
-                  active={filter === "all"}
-                  count={tasks.length}
-                  label="All"
-                  onClick={() => setFilter("all")}
+            <div className={styles.sectionHeader}>
+              <h2>Other</h2>
+              <button
+                className={styles.addButton}
+                onClick={onAddTimerClick}
+                type="button"
+              >
+                <Icon name="plus" size={22} />
+                <span>New timer</span>
+              </button>
+            </div>
+
+            <div className={styles.cardContainer}>
+              {timers.map((task) => (
+                <Stopwatch
+                  id={task.id}
+                  isActive={runningTaskId === task.id}
+                  key={task.id}
+                  name={task.name}
+                  notes={task.notes}
+                  estimatedHours={task.estimatedHours}
+                  onActiveChange={handleActiveChange}
+                  onDelete={deleteTask}
+                  onSecondsChange={handleSecondsChange}
+                  onUpdate={updateTask}
+                  seconds={task.seconds}
                 />
-                {TASK_STATUSES.map((status) => (
+              ))}
+
+              {timers.length === 0 && (
+                <div className={styles.sectionEmpty}>
+                  No standalone timers yet.
+                </div>
+              )}
+            </div>
+          </section>
+
+          <section className={styles.timersSection}>
+            <div className={styles.sectionHeader}>
+              <div className={styles.timersHeader}>
+                <h2>Timers</h2>
+                <div className={styles.filters}>
                   <FilterButton
-                    active={filter === status}
-                    count={
-                      tasks.filter((task) => task.status === status).length
-                    }
-                    key={status}
-                    label={TASK_STATUS_LABELS[status]}
-                    onClick={() => setFilter(status)}
+                    active={filter === "all"}
+                    count={taskTimers.length}
+                    label="All"
+                    onClick={() => setFilter("all")}
                   />
-                ))}
+                  {TASK_STATUSES.map((status) => (
+                    <FilterButton
+                      active={filter === status}
+                      count={
+                        taskTimers.filter((task) => task.status === status)
+                          .length
+                      }
+                      key={status}
+                      label={TASK_STATUS_LABELS[status]}
+                      onClick={() => setFilter(status)}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className={styles.sectionActions}>
+                <CopyButton seconds={tasks.map((task) => task.seconds)} />
+                <button
+                  className={styles.addButton}
+                  onClick={onAddTaskClick}
+                  type="button"
+                >
+                  <Icon name="plus" size={22} />
+                  <span>New task</span>
+                </button>
               </div>
             </div>
 
             <div className={styles.cardContainer}>
-              {tasks.map((task) => {
+              {taskTimers.map((task) => {
                 const isHidden = filter !== "all" && task.status !== filter;
 
                 return (
@@ -193,21 +246,21 @@ export const App = memo(function App() {
                 );
               })}
 
-              {tasks.length === 0 && (
+              {taskTimers.length === 0 && (
                 <div className={styles.emptyState}>
                   <div className={styles.emptyIcon}>
                     <Icon name="clock" />
                   </div>
-                  <h3>Your time starts here</h3>
-                  <p>Create a timer for the first thing you want to focus on.</p>
-                  <button onClick={onAddStopwatchClick} type="button">
+                  <h3>Your first task starts here</h3>
+                  <p>Create a task when you want to track its status and story points.</p>
+                  <button onClick={onAddTaskClick} type="button">
                     <Icon name="plus" size={18} />
-                    New timer
+                    New task
                   </button>
                 </div>
               )}
 
-              {tasks.length > 0 && visibleTaskCount === 0 && (
+              {taskTimers.length > 0 && visibleTaskCount === 0 && (
                 <div className={styles.filterEmpty}>
                   No timers match this filter yet.
                 </div>
@@ -221,7 +274,10 @@ export const App = memo(function App() {
 });
 
 function normalizeTask(task: Task): Task {
-  const status = TASK_STATUSES.includes(task.status) ? task.status : "todo";
+  const status =
+    task.status != null && TASK_STATUSES.includes(task.status)
+      ? task.status
+      : undefined;
   const dailySeconds = task.dailySeconds ?? {
     [getDateKey()]: Math.max(0, Number(task.seconds) || 0),
   };
@@ -231,9 +287,12 @@ function normalizeTask(task: Task): Task {
     name: task.name ?? "",
     notes: task.notes ?? "",
     estimatedHours: toWholeNumber(task.estimatedHours),
-    storyPoints: toWholeNumber(task.storyPoints),
+    storyPoints:
+      task.storyPoints == null
+        ? undefined
+        : toWholeNumber(task.storyPoints),
     seconds: Math.max(0, Number(task.seconds) || 0),
-    status: status as TaskStatus,
+    status: status as TaskStatus | undefined,
     dailySeconds,
   };
 }

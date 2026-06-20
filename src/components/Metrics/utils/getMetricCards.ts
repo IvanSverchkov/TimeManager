@@ -3,8 +3,6 @@ import { formatDuration } from "@utils/time";
 import type { MetricCardProps } from "../MetricCard";
 import type { MetricsData } from "./getMetricsData";
 
-const WORK_WEEK_SECONDS = 40 * 60 * 60;
-
 function getTotalTrackedMetric({
   totalSeconds,
 }: MetricsData): MetricCardProps {
@@ -22,19 +20,6 @@ function getTodayMetric({ todaySeconds }: MetricsData): MetricCardProps {
     icon: "calendar",
     tone: "green",
     value: formatDuration(todaySeconds),
-  };
-}
-
-function getWeekRemainingMetric({
-  weekSeconds,
-}: MetricsData): MetricCardProps {
-  const remainingSeconds = Math.max(0, WORK_WEEK_SECONDS - weekSeconds);
-
-  return {
-    label: "Week remaining",
-    icon: "trend",
-    tone: "purple",
-    value: formatDuration(remainingSeconds),
   };
 }
 

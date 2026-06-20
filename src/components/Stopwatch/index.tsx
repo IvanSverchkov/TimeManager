@@ -12,8 +12,8 @@ type StopwatchProps = {
   seconds: number;
   notes: string;
   estimatedHours: number;
-  storyPoints: number;
-  status: TaskStatus;
+  storyPoints?: number;
+  status?: TaskStatus;
   hidden?: boolean;
   onActiveChange?: (id: number, isActive: boolean) => void;
   onDelete?: (id: number) => void;

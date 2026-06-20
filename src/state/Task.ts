@@ -25,9 +25,9 @@ export type Task = {
   name: string;
   notes: string;
   estimatedHours: number;
-  storyPoints: number;
+  storyPoints?: number;
   seconds: number;
-  status: TaskStatus;
+  status?: TaskStatus;
   dailySeconds: Record<string, number>;
 }
 
