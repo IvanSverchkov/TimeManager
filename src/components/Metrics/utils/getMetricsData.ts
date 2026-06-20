@@ -9,7 +9,8 @@ type GetMetricsDataParams = {
 export type MetricsData = {
   taskCount: number;
   completedTasks: number;
-  focusedSeconds: number;
+  completedStoryPoints: number;
+  totalStoryPoints: number;
   todaySeconds: number;
   totalSeconds: number;
   weekSeconds: number;
@@ -25,8 +26,9 @@ export function getMetricsData({
   let totalSeconds = 0;
   let todaySeconds = 0;
   let weekSeconds = 0;
-  let focusedSeconds = 0;
   let completedTasks = 0;
+  let completedStoryPoints = 0;
+  let totalStoryPoints = 0;
 
   tasks.forEach((task) => {
     const liveTaskSeconds = liveSeconds[task.id] ?? 0;
@@ -35,20 +37,24 @@ export function getMetricsData({
     totalSeconds += taskTotalSeconds;
     todaySeconds += (task.dailySeconds[todayKey] ?? 0) + liveTaskSeconds;
     weekSeconds += liveTaskSeconds;
+    totalStoryPoints += task.storyPoints;
 
     Object.entries(task.dailySeconds).forEach(([dateKey, seconds]) => {
       if (weekKeys.has(dateKey)) weekSeconds += seconds;
     });
 
-    if (task.status !== "todo") focusedSeconds += taskTotalSeconds;
-    if (task.status === "done") completedTasks += 1;
+    if (task.status === "done") {
+      completedTasks += 1;
+      completedStoryPoints += task.storyPoints;
+    }
   });
 
   return {
     completedTasks,
-    focusedSeconds,
+    completedStoryPoints,
     taskCount: tasks.length,
     todaySeconds,
+    totalStoryPoints,
     totalSeconds,
     weekSeconds,
   };

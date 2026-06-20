@@ -56,20 +56,16 @@ function getCompletedMetric({
   };
 }
 
-function getFocusRateMetric({
-  focusedSeconds,
-  totalSeconds,
+function getStoryPointsMetric({
+  completedStoryPoints,
+  totalStoryPoints,
 }: MetricsData): MetricCardProps {
-  const focusRate =
-    totalSeconds === 0
-      ? 0
-      : Math.round((focusedSeconds / totalSeconds) * 100);
-
   return {
-    label: "Focus rate",
+    label: "Story points",
     icon: "target",
     tone: "red",
-    value: `${focusRate}%`,
+    value: `${completedStoryPoints} / ${totalStoryPoints}`,
+    suffix: "sp",
   };
 }
 
@@ -79,6 +75,6 @@ export function getMetricCards(data: MetricsData): Array<MetricCardProps> {
     getTodayMetric(data),
     getWeekRemainingMetric(data),
     getCompletedMetric(data),
-    getFocusRateMetric(data),
+    getStoryPointsMetric(data),
   ];
 }
