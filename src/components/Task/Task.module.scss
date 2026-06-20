@@ -1,8 +1,8 @@
 .taskCard {
   display: grid;
   grid-template-columns:
-    minmax(180px, 1.25fr) 148px minmax(225px, 0.9fr) 58px 276px 58px;
-  gap: 14px;
+    minmax(150px, 1fr) 126px 132px minmax(210px, 0.9fr) 54px 244px 54px;
+  gap: 10px;
   align-items: center;
   min-height: 88px;
   padding: 14px 18px;
@@ -43,6 +43,52 @@
 
 .notesInput {
   color: #667085;
+}
+
+.estimates {
+  display: grid;
+  gap: 7px;
+
+  label {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) 12px;
+    gap: 5px;
+    align-items: center;
+    color: #475467;
+    font-size: 12px;
+    font-weight: 650;
+  }
+
+  input {
+    width: 100%;
+    min-width: 0;
+    height: 29px;
+    padding: 0 8px;
+    border: 1px solid #d9dee8;
+    border-radius: 7px;
+    outline: 0;
+    color: #182033;
+    background: #fff;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+
+    &::placeholder {
+      color: #98a2b3;
+    }
+
+    &:focus {
+      border-color: #8fb4ff;
+      box-shadow: 0 0 0 3px rgb(37 99 235 / 10%);
+    }
+  }
+
+  small {
+    color: #98a2b3;
+    font-size: 11px;
+    font-weight: 600;
+  }
 }
 
 .status {
@@ -180,7 +226,7 @@
 @media (max-width: 1120px) {
   .taskCard {
     grid-template-columns:
-      minmax(190px, 1fr) 154px minmax(245px, 1fr) 58px 58px;
+      minmax(180px, 1fr) 126px 140px minmax(225px, 1fr) 54px;
   }
 
   .adjustments {
@@ -191,7 +237,7 @@
 
   .delete {
     grid-column: 5;
-    grid-row: 1;
+    grid-row: 2;
   }
 }
 
@@ -204,23 +250,31 @@
 
   .description {
     grid-column: 1;
+    grid-row: 1;
+  }
+
+  .estimates {
+    grid-column: 1;
+    grid-row: 2;
+    width: 126px;
   }
 
   .status {
     grid-column: 1;
+    grid-row: 3;
     width: 150px;
   }
 
   .toggle {
     grid-column: 2;
-    grid-row: 1 / span 2;
+    grid-row: 1 / span 3;
     width: 50px;
     height: 50px;
   }
 
   .delete {
     grid-column: 2;
-    grid-row: 3;
+    grid-row: 5;
     width: 50px;
     height: 50px;
   }

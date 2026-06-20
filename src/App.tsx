@@ -76,6 +76,8 @@ export const App = memo(function App() {
     createTask({
       name: "",
       notes: "",
+      estimatedHours: 0,
+      storyPoints: 0,
       seconds: 0,
       status: "todo",
       dailySeconds: {},
@@ -155,6 +157,8 @@ export const App = memo(function App() {
                     key={task.id}
                     name={task.name}
                     notes={task.notes}
+                    estimatedHours={task.estimatedHours}
+                    storyPoints={task.storyPoints}
                     onActiveChange={handleActiveChange}
                     onDelete={deleteTask}
                     onLiveSecondsChange={handleLiveSecondsChange}
@@ -202,8 +206,14 @@ function normalizeTask(task: Task): Task {
     ...task,
     name: task.name ?? "",
     notes: task.notes ?? "",
+    estimatedHours: toWholeNumber(task.estimatedHours),
+    storyPoints: toWholeNumber(task.storyPoints),
     seconds: Math.max(0, Number(task.seconds) || 0),
     status: status as TaskStatus,
     dailySeconds,
   };
+}
+
+function toWholeNumber(value: number): number {
+  return Math.max(0, Math.floor(Number(value) || 0));
 }

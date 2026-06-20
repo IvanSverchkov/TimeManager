@@ -14,6 +14,8 @@ type CardProps = {
   text: string;
   seconds: number;
   notes: string;
+  estimatedHours: number;
+  storyPoints: number;
   status: TaskStatus;
   buttons?: React.ReactNode;
   onDelete: () => void;
@@ -56,6 +58,42 @@ export function TaskComponent(props: CardProps) {
         />
       </div>
 
+      <div className={styles.estimates}>
+        <label>
+          <span>Time</span>
+          <input
+            min="1"
+            placeholder="0"
+            step="1"
+            type="number"
+            value={props.estimatedHours || ""}
+            onChange={(event) => {
+              props.onUpdate?.({
+                id: props.id,
+                estimatedHours: toWholeNumber(event.target.value),
+              });
+            }}
+          />
+          <small>h</small>
+        </label>
+        <label>
+          <span>SP</span>
+          <input
+            min="1"
+            placeholder="0"
+            step="1"
+            type="number"
+            value={props.storyPoints || ""}
+            onChange={(event) => {
+              props.onUpdate?.({
+                id: props.id,
+                storyPoints: toWholeNumber(event.target.value),
+              });
+            }}
+          />
+        </label>
+      </div>
+
       <label className={styles.status} data-status={props.status}>
         <span className={styles.visuallyHidden}>Task status</span>
         <select
@@ -78,7 +116,10 @@ export function TaskComponent(props: CardProps) {
         </svg>
       </label>
 
-      <TimeDisplay seconds={props.seconds} />
+      <TimeDisplay
+        estimatedHours={props.estimatedHours}
+        seconds={props.seconds}
+      />
 
       <button
         className={`${styles.toggle} ${props.isActive ? styles.pause : ""}`}
@@ -99,4 +140,8 @@ export function TaskComponent(props: CardProps) {
       </button>
     </article>
   );
+}
+
+function toWholeNumber(value: string): number {
+  return Math.max(0, Math.floor(Number(value) || 0));
 }

@@ -14,6 +14,8 @@ export type Task = {
   id: number;
   name: string;
   notes: string;
+  estimatedHours: number;
+  storyPoints: number;
   seconds: number;
   status: TaskStatus;
   dailySeconds: Record<string, number>;

@@ -15,11 +15,19 @@
     white-space: nowrap;
   }
 
-  > span:last-child {
-    color: #586174;
+  .remaining,
+  .overrun {
     font-size: 13px;
     font-weight: 500;
     white-space: nowrap;
+  }
+
+  .remaining {
+    color: #586174;
+  }
+
+  .overrun {
+    color: #dc2626;
   }
 }
 
