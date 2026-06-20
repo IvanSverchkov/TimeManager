@@ -3,7 +3,6 @@ import { formatDuration } from "@utils/time";
 import type { MetricCardProps } from "../MetricCard";
 import type { MetricsData } from "./getMetricsData";
 
-const WORK_DAY_SECONDS = 8 * 60 * 60;
 const WORK_WEEK_SECONDS = 40 * 60 * 60;
 
 function getTotalTrackedMetric({
@@ -18,15 +17,11 @@ function getTotalTrackedMetric({
 }
 
 function getTodayMetric({ todaySeconds }: MetricsData): MetricCardProps {
-  const progress = Math.min(100, (todaySeconds / WORK_DAY_SECONDS) * 100);
-
   return {
     label: "Today",
     icon: "calendar",
     tone: "green",
     value: formatDuration(todaySeconds),
-    suffix: "of 8h",
-    progress,
   };
 }
 
@@ -71,9 +66,8 @@ function getStoryPointsMetric({
 
 export function getMetricCards(data: MetricsData): Array<MetricCardProps> {
   return [
-    getTotalTrackedMetric(data),
     getTodayMetric(data),
-    getWeekRemainingMetric(data),
+    getTotalTrackedMetric(data),
     getCompletedMetric(data),
     getStoryPointsMetric(data),
   ];
