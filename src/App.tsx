@@ -6,6 +6,7 @@ import { Metrics } from "@components/Metrics";
 import { Stopwatch } from "@components/Stopwatch";
 import { Icon } from "@kit/Icon";
 import {
+  TASK_STATUS_LABELS,
   TASK_STATUSES,
   externalState,
   type Task,
@@ -16,7 +17,7 @@ import type { OmitExcept } from "@utils/types";
 
 import styles from "./App.module.scss";
 
-type TimerFilter = "all" | "active" | "done";
+type TimerFilter = "all" | TaskStatus;
 
 export const App = memo(function App() {
   const [tasks, setTasks] = useState<Array<Task>>(() => {
@@ -84,13 +85,9 @@ export const App = memo(function App() {
     });
   };
 
-  const activeCount = runningTaskId === null ? 0 : 1;
-  const doneCount = tasks.filter((task) => task.status === "done").length;
-  const visibleTaskCount = tasks.filter((task) => {
-    if (filter === "active") return runningTaskId === task.id;
-    if (filter === "done") return task.status === "done";
-    return true;
-  }).length;
+  const visibleTaskCount = tasks.filter(
+    (task) => filter === "all" || task.status === filter,
+  ).length;
 
   return (
     <main className={styles.page}>
@@ -127,26 +124,23 @@ export const App = memo(function App() {
                   label="All"
                   onClick={() => setFilter("all")}
                 />
-                <FilterButton
-                  active={filter === "active"}
-                  count={activeCount}
-                  label="Active"
-                  onClick={() => setFilter("active")}
-                />
-                <FilterButton
-                  active={filter === "done"}
-                  count={doneCount}
-                  label="Done"
-                  onClick={() => setFilter("done")}
-                />
+                {TASK_STATUSES.map((status) => (
+                  <FilterButton
+                    active={filter === status}
+                    count={
+                      tasks.filter((task) => task.status === status).length
+                    }
+                    key={status}
+                    label={TASK_STATUS_LABELS[status]}
+                    onClick={() => setFilter(status)}
+                  />
+                ))}
               </div>
             </div>
 
             <div className={styles.cardContainer}>
               {tasks.map((task) => {
-                const isHidden =
-                  (filter === "active" && runningTaskId !== task.id) ||
-                  (filter === "done" && task.status !== "done");
+                const isHidden = filter !== "all" && task.status !== filter;
 
                 return (
                   <Stopwatch

@@ -3,7 +3,12 @@ import type React from "react";
 import { TimeDisplay } from "../TimeDisplay";
 import { DisplayInput } from "@kit/DisplayInput";
 import { Icon } from "@kit/Icon";
-import type { Task, TaskStatus } from "@state/Task";
+import {
+  TASK_STATUS_LABELS,
+  TASK_STATUSES,
+  type Task,
+  type TaskStatus,
+} from "@state/Task";
 import type { OmitExcept } from "@utils/types";
 
 import styles from "./Task.module.scss";
@@ -21,14 +26,6 @@ type CardProps = {
   onDelete: () => void;
   onToggle: () => void;
   onUpdate?: (task: OmitExcept<Task, "id">) => void;
-};
-
-const STATUS_LABELS: Record<TaskStatus, string> = {
-  todo: "Todo",
-  "in-progress": "In progress",
-  review: "Review",
-  testing: "Testing",
-  done: "Done",
 };
 
 export function TaskComponent(props: CardProps) {
@@ -105,9 +102,9 @@ export function TaskComponent(props: CardProps) {
             });
           }}
         >
-          {Object.entries(STATUS_LABELS).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
+          {TASK_STATUSES.map((status) => (
+            <option key={status} value={status}>
+              {TASK_STATUS_LABELS[status]}
             </option>
           ))}
         </select>

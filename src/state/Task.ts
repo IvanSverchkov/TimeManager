@@ -2,6 +2,7 @@ import { LocalStorageState } from "./LocalStorageState";
 
 export const TASK_STATUSES = [
   "todo",
+  "pause",
   "in-progress",
   "review",
   "testing",
@@ -9,6 +10,15 @@ export const TASK_STATUSES = [
 ] as const;
 
 export type TaskStatus = (typeof TASK_STATUSES)[number];
+
+export const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
+  todo: "Todo",
+  pause: "Pause",
+  "in-progress": "In progress",
+  review: "Review",
+  testing: "Testing",
+  done: "Done",
+};
 
 export type Task = {
   id: number;
