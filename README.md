@@ -1,3 +1,3 @@
 # Time Manager
 
-Here is the link: [ivansverchkov.github.io/TimeManager/](ivansverchkov.github.io/TimeManager/)
+Here is the link: [ivansverchkov.github.io/TimeManager/](http://ivansverchkov.github.io/TimeManager/)
