@@ -17,6 +17,7 @@ export function useMetrics({ liveSeconds, tasks }: UseMetricsParams) {
   return useMemo<Array<MetricCardProps>>(() => {
     const todayKey = getDateKey();
     const weekKeys = new Set(getWeekDateKeys());
+
     let totalSeconds = 0;
     let todaySeconds = 0;
     let weekSeconds = 0;
@@ -25,15 +26,19 @@ export function useMetrics({ liveSeconds, tasks }: UseMetricsParams) {
     tasks.forEach((task) => {
       const liveTaskSeconds = liveSeconds[task.id] ?? 0;
       const taskTotal = task.seconds + liveTaskSeconds;
+
       totalSeconds += taskTotal;
       todaySeconds += (task.dailySeconds[todayKey] ?? 0) + liveTaskSeconds;
 
       Object.entries(task.dailySeconds).forEach(([dateKey, seconds]) => {
         if (weekKeys.has(dateKey)) weekSeconds += seconds;
       });
+
       weekSeconds += liveTaskSeconds;
 
-      if (task.status !== "todo") focusedSeconds += taskTotal;
+      if (task.status !== "todo") {
+        focusedSeconds += taskTotal
+      }
     });
 
     const completedTasks = tasks.filter((task) => task.status === "done").length;
@@ -49,36 +54,36 @@ export function useMetrics({ liveSeconds, tasks }: UseMetricsParams) {
 
     return [
       {
+        label: "Total tracked",
         icon: "clock",
         tone: "blue",
-        label: "Total tracked",
         value: formatDuration(totalSeconds),
       },
       {
+        label: "Today",
         icon: "calendar",
         tone: "green",
-        label: "Today",
         value: formatDuration(todaySeconds),
         suffix: "of 8h",
         progress: todayProgress,
       },
       {
+        label: "Week remaining",
         icon: "trend",
         tone: "purple",
-        label: "Week remaining",
         value: formatDuration(weekRemaining),
       },
       {
+        label: "Completed",
         icon: "check",
         tone: "green",
-        label: "Completed",
         value: `${completedTasks} / ${tasks.length}`,
         suffix: "tasks",
       },
       {
+        label: "Focus rate",
         icon: "target",
         tone: "red",
-        label: "Focus rate",
         value: `${focusRate}%`,
       },
     ];
