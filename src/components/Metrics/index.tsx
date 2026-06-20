@@ -7,15 +7,11 @@ import styles from "./Metrics.module.scss";
 import { useMetrics } from "./useMetrics";
 
 type MetricsProps = {
-  liveSeconds: Record<number, number>;
   tasks: Array<Task>;
 };
 
-export const Metrics = memo(function Metrics({
-  liveSeconds,
-  tasks,
-}: MetricsProps) {
-  const metricCards = useMetrics({ liveSeconds, tasks });
+export const Metrics = memo(function Metrics({ tasks }: MetricsProps) {
+  const metricCards = useMetrics({ tasks });
 
   return (
     <section className={styles.metrics}>

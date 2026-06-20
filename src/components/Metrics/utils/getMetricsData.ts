@@ -2,7 +2,6 @@ import type { Task } from "@state/Task";
 import { getDateKey, getWeekDateKeys } from "@utils/time";
 
 type GetMetricsDataParams = {
-  liveSeconds: Record<number, number>;
   tasks: Array<Task>;
 };
 
@@ -16,10 +15,7 @@ export type MetricsData = {
   weekSeconds: number;
 };
 
-export function getMetricsData({
-  liveSeconds,
-  tasks,
-}: GetMetricsDataParams): MetricsData {
+export function getMetricsData({ tasks }: GetMetricsDataParams): MetricsData {
   const todayKey = getDateKey();
   const weekKeys = new Set(getWeekDateKeys());
 
@@ -31,12 +27,8 @@ export function getMetricsData({
   let totalStoryPoints = 0;
 
   tasks.forEach((task) => {
-    const liveTaskSeconds = liveSeconds[task.id] ?? 0;
-    const taskTotalSeconds = task.seconds + liveTaskSeconds;
-
-    totalSeconds += taskTotalSeconds;
-    todaySeconds += (task.dailySeconds[todayKey] ?? 0) + liveTaskSeconds;
-    weekSeconds += liveTaskSeconds;
+    totalSeconds += task.seconds;
+    todaySeconds += task.dailySeconds[todayKey] ?? 0;
     totalStoryPoints += task.storyPoints;
 
     Object.entries(task.dailySeconds).forEach(([dateKey, seconds]) => {

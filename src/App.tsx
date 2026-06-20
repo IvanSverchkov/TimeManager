@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 import { CopyButton } from "@components/CopyButton";
 import { FilterButton } from "@components/FilterButton";
@@ -27,14 +27,20 @@ export const App = memo(function App() {
   });
   const [filter, setFilter] = useState<TimerFilter>("all");
   const [runningTaskId, setRunningTaskId] = useState<number | null>(null);
-  const [liveSeconds, setLiveSeconds] = useState<Record<number, number>>({});
 
-  useEffect(() => {
-    externalState.set("tasks", { tasks });
-  }, [tasks]);
+  const commitTasks = useCallback(
+    (getNextTasks: (currentTasks: Array<Task>) => Array<Task>) => {
+      setTasks((currentTasks) => {
+        const nextTasks = getNextTasks(currentTasks);
+        externalState.set("tasks", { tasks: nextTasks });
+        return nextTasks;
+      });
+    },
+    [],
+  );
 
   const createTask = (task: Omit<Task, "id">) => {
-    setTasks((currentTasks) => [
+    commitTasks((currentTasks) => [
       ...currentTasks,
       {
         ...task,
@@ -43,21 +49,27 @@ export const App = memo(function App() {
     ]);
   };
 
-  const updateTask = useCallback((newTask: OmitExcept<Task, "id">) => {
-    setTasks((currentTasks) =>
-      currentTasks.map((currentTask) =>
-        currentTask.id === newTask.id
-          ? { ...currentTask, ...newTask, id: currentTask.id }
-          : currentTask,
-      ),
-    );
-  }, []);
+  const updateTask = useCallback(
+    (newTask: OmitExcept<Task, "id">) => {
+      commitTasks((currentTasks) =>
+        currentTasks.map((currentTask) =>
+          currentTask.id === newTask.id
+            ? { ...currentTask, ...newTask, id: currentTask.id }
+            : currentTask,
+        ),
+      );
+    },
+    [commitTasks],
+  );
 
-  const deleteTask = useCallback((id: number) => {
-    setTasks((currentTasks) =>
-      currentTasks.filter((currentTask) => currentTask.id !== id),
-    );
-  }, []);
+  const deleteTask = useCallback(
+    (id: number) => {
+      commitTasks((currentTasks) =>
+        currentTasks.filter((currentTask) => currentTask.id !== id),
+      );
+    },
+    [commitTasks],
+  );
 
   const handleActiveChange = useCallback((id: number, isActive: boolean) => {
     setRunningTaskId((currentId) => {
@@ -66,12 +78,36 @@ export const App = memo(function App() {
     });
   }, []);
 
-  const handleLiveSecondsChange = useCallback((id: number, seconds: number) => {
-    setLiveSeconds((currentSeconds) => {
-      if ((currentSeconds[id] ?? 0) === seconds) return currentSeconds;
-      return { ...currentSeconds, [id]: seconds };
-    });
-  }, []);
+  const handleSecondsChange = useCallback(
+    (id: number, deltaSeconds: number) => {
+      if (deltaSeconds === 0) return;
+
+      const todayKey = getDateKey();
+
+      commitTasks((currentTasks) =>
+        currentTasks.map((task) => {
+          if (task.id !== id) return task;
+
+          const seconds = Math.max(0, task.seconds + deltaSeconds);
+          const appliedDelta = seconds - task.seconds;
+          const todaySeconds = Math.max(
+            0,
+            (task.dailySeconds[todayKey] ?? 0) + appliedDelta,
+          );
+
+          return {
+            ...task,
+            seconds,
+            dailySeconds: {
+              ...task.dailySeconds,
+              [todayKey]: todaySeconds,
+            },
+          };
+        }),
+      );
+    },
+    [commitTasks],
+  );
 
   const onAddStopwatchClick = () => {
     createTask({
@@ -95,11 +131,7 @@ export const App = memo(function App() {
         <header className={styles.header}>
           <h1>TimeManager</h1>
           <div className={styles.headerActions}>
-            <CopyButton
-              seconds={tasks.map(
-                (task) => task.seconds + (liveSeconds[task.id] ?? 0),
-              )}
-            />
+            <CopyButton seconds={tasks.map((task) => task.seconds)} />
             <button
               className={styles.addButton}
               onClick={onAddStopwatchClick}
@@ -112,8 +144,7 @@ export const App = memo(function App() {
         </header>
 
         <div className={styles.content}>
-          <Metrics liveSeconds={liveSeconds} tasks={tasks} />
-
+          <Metrics tasks={tasks} />
           <section className={styles.timersSection}>
             <div className={styles.timersHeader}>
               <h2>Timers</h2>
@@ -144,7 +175,6 @@ export const App = memo(function App() {
 
                 return (
                   <Stopwatch
-                    dailySeconds={task.dailySeconds}
                     hidden={isHidden}
                     id={task.id}
                     isActive={runningTaskId === task.id}
@@ -155,7 +185,7 @@ export const App = memo(function App() {
                     storyPoints={task.storyPoints}
                     onActiveChange={handleActiveChange}
                     onDelete={deleteTask}
-                    onLiveSecondsChange={handleLiveSecondsChange}
+                    onSecondsChange={handleSecondsChange}
                     onUpdate={updateTask}
                     seconds={task.seconds}
                     status={task.status}

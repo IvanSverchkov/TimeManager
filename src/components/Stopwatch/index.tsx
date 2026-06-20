@@ -3,7 +3,6 @@ import React from "react";
 import { Button } from "@kit/Button";
 import { TaskComponent } from "../Task";
 import type { Task, TaskStatus } from "@state/Task";
-import { getDateKey } from "@utils/time";
 import type { OmitExcept } from "@utils/types";
 
 type StopwatchProps = {
@@ -15,11 +14,10 @@ type StopwatchProps = {
   estimatedHours: number;
   storyPoints: number;
   status: TaskStatus;
-  dailySeconds: Record<string, number>;
   hidden?: boolean;
   onActiveChange?: (id: number, isActive: boolean) => void;
   onDelete?: (id: number) => void;
-  onLiveSecondsChange?: (id: number, seconds: number) => void;
+  onSecondsChange?: (id: number, deltaSeconds: number) => void;
   onUpdate?: (task: OmitExcept<Task, "id">) => void;
 };
 
@@ -66,7 +64,6 @@ export class Stopwatch extends React.Component<StopwatchProps, State> {
   componentWillUnmount() {
     window.clearInterval(this.timerId);
     this.props.onActiveChange?.(this.props.id, false);
-    this.props.onLiveSecondsChange?.(this.props.id, 0);
   }
 
   startTimer = () => {
@@ -78,7 +75,6 @@ export class Stopwatch extends React.Component<StopwatchProps, State> {
       newSeconds: 0,
     });
     this.props.onActiveChange?.(this.props.id, true);
-    this.props.onLiveSecondsChange?.(this.props.id, 0);
 
     window.clearInterval(this.timerId);
     this.timerId = window.setInterval(this.updateTimer, 333);
@@ -90,12 +86,7 @@ export class Stopwatch extends React.Component<StopwatchProps, State> {
     window.clearInterval(this.timerId);
     const deltaSeconds = this.state.newSeconds + (additionalSeconds ?? 0);
     const seconds = Math.max(0, this.state.seconds + deltaSeconds);
-    const appliedDelta = seconds - this.state.seconds;
-    const todayKey = getDateKey();
-    const todaySeconds = Math.max(
-      0,
-      (this.props.dailySeconds[todayKey] ?? 0) + appliedDelta,
-    );
+    const appliedDelta = seconds - this.state.seconds - this.state.newSeconds;
 
     this.setState({
       seconds,
@@ -104,15 +95,9 @@ export class Stopwatch extends React.Component<StopwatchProps, State> {
       startTimeMs: null,
     });
     this.props.onActiveChange?.(this.props.id, false);
-    this.props.onLiveSecondsChange?.(this.props.id, 0);
-    this.props.onUpdate?.({
-      id: this.props.id,
-      seconds,
-      dailySeconds: {
-        ...this.props.dailySeconds,
-        [todayKey]: todaySeconds,
-      },
-    });
+    if (appliedDelta !== 0) {
+      this.props.onSecondsChange?.(this.props.id, appliedDelta);
+    }
   };
 
   updateTimer = () => {
@@ -120,8 +105,9 @@ export class Stopwatch extends React.Component<StopwatchProps, State> {
     const newSeconds = Math.floor((Date.now() - this.state.startTimeMs) / 1000);
 
     if (newSeconds !== this.state.newSeconds) {
+      const deltaSeconds = newSeconds - this.state.newSeconds;
       this.setState({ newSeconds });
-      this.props.onLiveSecondsChange?.(this.props.id, newSeconds);
+      this.props.onSecondsChange?.(this.props.id, deltaSeconds);
     }
   };
 

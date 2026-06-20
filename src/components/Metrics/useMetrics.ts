@@ -6,13 +6,12 @@ import { getMetricCards } from "./utils/getMetricCards";
 import { getMetricsData } from "./utils/getMetricsData";
 
 type UseMetricsParams = {
-  liveSeconds: Record<number, number>;
   tasks: Array<Task>;
 };
 
-export function useMetrics({ liveSeconds, tasks }: UseMetricsParams) {
+export function useMetrics({ tasks }: UseMetricsParams) {
   return useMemo(() => {
-    const metricsData = getMetricsData({ liveSeconds, tasks });
+    const metricsData = getMetricsData({ tasks });
     return getMetricCards(metricsData);
-  }, [liveSeconds, tasks]);
+  }, [tasks]);
 }
