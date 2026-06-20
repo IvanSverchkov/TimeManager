@@ -22,7 +22,7 @@ export function MetricCard({
   return (
     <article className={styles.metricCard}>
       <div className={`${styles.metricIcon} ${styles[tone]}`}>
-        <Icon name={icon} size={22} />
+        <Icon name={icon} size={17} />
       </div>
       <div className={styles.metricBody}>
         <p>{label}</p>
