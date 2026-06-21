@@ -23,6 +23,15 @@ function getTodayWidget({ todaySeconds }: WidgetsData): WidgetProps {
   };
 }
 
+function getRequiredWidget({ requiredSeconds }: WidgetsData): WidgetProps {
+  return {
+    label: "Required",
+    icon: "trend",
+    tone: "purple",
+    value: formatDuration(requiredSeconds),
+  };
+}
+
 function getCompletedWidget({
   completedTasks,
   taskCount,
@@ -53,6 +62,7 @@ export function getWidgets(data: WidgetsData): Array<WidgetProps> {
   return [
     getTodayWidget(data),
     getTotalTrackedWidget(data),
+    getRequiredWidget(data),
     getCompletedWidget(data),
     getStoryPointsWidget(data),
   ];

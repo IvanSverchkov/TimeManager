@@ -1,9 +1,9 @@
 .widget {
   display: flex;
   align-items: flex-start;
-  gap: 11px;
-  min-height: 112px;
-  padding: 18px 15px;
+  gap: 9px;
+  min-height: 92px;
+  padding: 14px 13px;
   border: 1px solid #e3e7ee;
   border-radius: 12px;
   background: #fff;
@@ -18,23 +18,23 @@
 
 .widgetIcon {
   display: grid;
-  flex: 0 0 35px;
-  width: 35px;
-  height: 35px;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
   place-items: center;
   border-radius: 50%;
 }
 
 .widgetBody {
   min-width: 0;
-  padding-top: 2px;
+  padding-top: 1px;
   width: 100%;
 
   > p {
-    margin: 0 0 9px;
+    margin: 0 0 6px;
     overflow: hidden;
     color: #4b556b;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 550;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -49,7 +49,7 @@
 
   strong {
     color: #111827;
-    font-size: clamp(20px, 1.7vw, 25px);
+    font-size: clamp(19px, 1.5vw, 22px);
     font-weight: 620;
     letter-spacing: -0.035em;
   }
