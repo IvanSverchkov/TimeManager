@@ -1,11 +1,11 @@
 import type { Task } from "@state/Task";
 import { getDateKey } from "@utils/time";
 
-type GetMetricsDataParams = {
+type GetWidgetsDataParams = {
   tasks: Array<Task>;
 };
 
-export type MetricsData = {
+export type WidgetsData = {
   taskCount: number;
   completedTasks: number;
   completedStoryPoints: number;
@@ -14,7 +14,7 @@ export type MetricsData = {
   totalSeconds: number;
 };
 
-export function getMetricsData({ tasks }: GetMetricsDataParams): MetricsData {
+export function getWidgetsData({ tasks }: GetWidgetsDataParams): WidgetsData {
   const todayKey = getDateKey();
 
   let totalSeconds = 0;

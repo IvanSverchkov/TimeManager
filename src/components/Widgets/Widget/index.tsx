@@ -1,8 +1,8 @@
 import { Icon, type IconName } from "@kit/Icon";
 
-import styles from "./MetricCard.module.scss";
+import styles from "./Widget.module.scss";
 
-export type MetricCardProps = {
+export type WidgetProps = {
   icon: IconName;
   tone: "blue" | "green" | "purple" | "red";
   label: string;
@@ -11,22 +11,22 @@ export type MetricCardProps = {
   progress?: number;
 };
 
-export function MetricCard({
+export function Widget({
   icon,
   tone,
   label,
   value,
   suffix,
   progress,
-}: MetricCardProps) {
+}: WidgetProps) {
   return (
-    <article className={styles.metricCard}>
-      <div className={`${styles.metricIcon} ${styles[tone]}`}>
+    <article className={styles.widget}>
+      <div className={`${styles.widgetIcon} ${styles[tone]}`}>
         <Icon name={icon} size={17} />
       </div>
-      <div className={styles.metricBody}>
+      <div className={styles.widgetBody}>
         <p>{label}</p>
-        <div className={styles.metricValue}>
+        <div className={styles.widgetValue}>
           <strong>{value}</strong>
           {suffix && <span>{suffix}</span>}
         </div>

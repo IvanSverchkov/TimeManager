@@ -1,11 +1,11 @@
 import { formatDuration } from "@utils/time";
 
-import type { MetricCardProps } from "../MetricCard";
-import type { MetricsData } from "./getMetricsData";
+import type { WidgetProps } from "../Widget";
+import type { WidgetsData } from "./getWidgetsData";
 
-function getTotalTrackedMetric({
+function getTotalTrackedWidget({
   totalSeconds,
-}: MetricsData): MetricCardProps {
+}: WidgetsData): WidgetProps {
   return {
     label: "Total tracked",
     icon: "clock",
@@ -14,7 +14,7 @@ function getTotalTrackedMetric({
   };
 }
 
-function getTodayMetric({ todaySeconds }: MetricsData): MetricCardProps {
+function getTodayWidget({ todaySeconds }: WidgetsData): WidgetProps {
   return {
     label: "Today",
     icon: "calendar",
@@ -23,10 +23,10 @@ function getTodayMetric({ todaySeconds }: MetricsData): MetricCardProps {
   };
 }
 
-function getCompletedMetric({
+function getCompletedWidget({
   completedTasks,
   taskCount,
-}: MetricsData): MetricCardProps {
+}: WidgetsData): WidgetProps {
   return {
     label: "Completed",
     icon: "check",
@@ -36,10 +36,10 @@ function getCompletedMetric({
   };
 }
 
-function getStoryPointsMetric({
+function getStoryPointsWidget({
   completedStoryPoints,
   totalStoryPoints,
-}: MetricsData): MetricCardProps {
+}: WidgetsData): WidgetProps {
   return {
     label: "Story points",
     icon: "target",
@@ -49,11 +49,11 @@ function getStoryPointsMetric({
   };
 }
 
-export function getMetricCards(data: MetricsData): Array<MetricCardProps> {
+export function getWidgets(data: WidgetsData): Array<WidgetProps> {
   return [
-    getTodayMetric(data),
-    getTotalTrackedMetric(data),
-    getCompletedMetric(data),
-    getStoryPointsMetric(data),
+    getTodayWidget(data),
+    getTotalTrackedWidget(data),
+    getCompletedWidget(data),
+    getStoryPointsWidget(data),
   ];
 }

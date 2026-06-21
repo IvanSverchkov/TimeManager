@@ -2,7 +2,7 @@ import { memo, useCallback, useState } from "react";
 
 import { CopyButton } from "@components/CopyButton";
 import { FilterButton } from "@components/FilterButton";
-import { Metrics } from "@components/Metrics";
+import { Widgets } from "@components/Widgets";
 import { Stopwatch } from "@components/Stopwatch";
 import { Icon } from "@kit/Icon";
 import {
@@ -140,11 +140,11 @@ export const App = memo(function App() {
     <main className={styles.page}>
       <section className={styles.appShell}>
         <header className={styles.header}>
-          <h1>TimeManager</h1>
+          <h1>Time Manager</h1>
         </header>
 
         <div className={styles.content}>
-          <Metrics tasks={tasks} />
+          <Widgets tasks={tasks} />
 
           <section className={styles.timersSection}>
             <div className={styles.sectionHeader}>
