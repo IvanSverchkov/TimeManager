@@ -28,7 +28,9 @@ export function getWidgetsData({ tasks }: GetWidgetsDataParams): WidgetsData {
   tasks.forEach((task) => {
     totalSeconds += task.seconds;
     todaySeconds += task.dailySeconds[todayKey] ?? 0;
-    requiredSeconds += Math.max(task.estimatedHours * 60 * 60 - task.seconds, 0);
+    if (task.status !== "done") {
+      requiredSeconds += Math.max(task.estimatedHours * 60 * 60 - task.seconds, 0);
+    }
     if (task.storyPoints !== undefined) {
       totalStoryPoints += task.storyPoints;
     }
