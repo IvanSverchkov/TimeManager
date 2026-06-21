@@ -2,6 +2,7 @@ import { memo, useCallback, useState } from "react";
 
 import { CopyButton } from "@components/CopyButton";
 import { FilterButton } from "@components/FilterButton";
+import { SortableList } from "@components/SortableList";
 import { Widgets } from "@components/Widgets";
 import { Stopwatch } from "@components/Stopwatch";
 import { Icon } from "@kit/Icon";
@@ -66,6 +67,32 @@ export const App = memo(function App() {
     (id: number) => {
       commitTasks((currentTasks) =>
         currentTasks.filter((currentTask) => currentTask.id !== id),
+      );
+    },
+    [commitTasks],
+  );
+
+  const reorderTimers = useCallback(
+    (orderedIds: Array<number>) => {
+      commitTasks((currentTasks) =>
+        applyGroupOrder(
+          currentTasks,
+          orderedIds,
+          (task) => task.status === undefined,
+        ),
+      );
+    },
+    [commitTasks],
+  );
+
+  const reorderTasks = useCallback(
+    (orderedIds: Array<number>) => {
+      commitTasks((currentTasks) =>
+        applyGroupOrder(
+          currentTasks,
+          orderedIds,
+          (task) => task.status !== undefined,
+        ),
       );
     },
     [commitTasks],
@@ -160,21 +187,26 @@ export const App = memo(function App() {
             </div>
 
             <div className={styles.cardContainer}>
-              {timers.map((task) => (
-                <Stopwatch
-                  id={task.id}
-                  isActive={runningTaskId === task.id}
-                  key={task.id}
-                  name={task.name}
-                  notes={task.notes}
-                  estimatedHours={task.estimatedHours}
-                  onActiveChange={handleActiveChange}
-                  onDelete={deleteTask}
-                  onSecondsChange={handleSecondsChange}
-                  onUpdate={updateTask}
-                  seconds={task.seconds}
-                />
-              ))}
+              <SortableList
+                getHandleText={(task) => `Move ${task.name || "timer"}`}
+                items={timers}
+                onReorder={reorderTimers}
+              >
+                {(task) => (
+                  <Stopwatch
+                    id={task.id}
+                    isActive={runningTaskId === task.id}
+                    name={task.name}
+                    notes={task.notes}
+                    estimatedHours={task.estimatedHours}
+                    onActiveChange={handleActiveChange}
+                    onDelete={deleteTask}
+                    onSecondsChange={handleSecondsChange}
+                    onUpdate={updateTask}
+                    seconds={task.seconds}
+                  />
+                )}
+              </SortableList>
 
               {timers.length === 0 && (
                 <div className={styles.sectionEmpty}>
@@ -223,15 +255,18 @@ export const App = memo(function App() {
             </div>
 
             <div className={styles.cardContainer}>
-              {taskTimers.map((task) => {
-                const isHidden = filter !== "all" && task.status !== filter;
-
-                return (
+              <SortableList
+                getHandleText={(task) => `Move ${task.name || "task"}`}
+                isItemVisible={(task) =>
+                  filter === "all" || task.status === filter
+                }
+                items={taskTimers}
+                onReorder={reorderTasks}
+              >
+                {(task) => (
                   <Stopwatch
-                    hidden={isHidden}
                     id={task.id}
                     isActive={runningTaskId === task.id}
-                    key={task.id}
                     name={task.name}
                     notes={task.notes}
                     estimatedHours={task.estimatedHours}
@@ -243,8 +278,8 @@ export const App = memo(function App() {
                     seconds={task.seconds}
                     status={task.status}
                   />
-                );
-              })}
+                )}
+              </SortableList>
 
               {taskTimers.length === 0 && (
                 <div className={styles.emptyState}>
@@ -299,4 +334,30 @@ function normalizeTask(task: Task): Task {
 
 function toWholeNumber(value: number): number {
   return Math.max(0, Math.floor(Number(value) || 0));
+}
+
+function applyGroupOrder(
+  currentTasks: Array<Task>,
+  orderedIds: Array<number>,
+  isGroupTask: (task: Task) => boolean,
+): Array<Task> {
+  const groupTasksById = new Map(
+    currentTasks.filter(isGroupTask).map((task) => [task.id, task]),
+  );
+  const orderedIdSet = new Set(orderedIds);
+  const orderedGroupTasks = orderedIds.flatMap((id) => {
+    const task = groupTasksById.get(id);
+    return task ? [task] : [];
+  });
+
+  currentTasks.forEach((task) => {
+    if (isGroupTask(task) && !orderedIdSet.has(task.id)) {
+      orderedGroupTasks.push(task);
+    }
+  });
+
+  let groupIndex = 0;
+  return currentTasks.map((task) =>
+    isGroupTask(task) ? orderedGroupTasks[groupIndex++] : task,
+  );
 }
