@@ -148,7 +148,7 @@ export const App = memo(function App() {
 
           <section className={styles.timersSection}>
             <div className={styles.sectionHeader}>
-              <h2>Other</h2>
+              <h2>Timers</h2>
               <button
                 className={styles.addButton}
                 onClick={onAddTimerClick}
@@ -187,7 +187,7 @@ export const App = memo(function App() {
           <section className={styles.timersSection}>
             <div className={styles.sectionHeader}>
               <div className={styles.timersHeader}>
-                <h2>Timers</h2>
+                <h2>Tasks</h2>
                 <div className={styles.filters}>
                   <FilterButton
                     active={filter === "all"}
