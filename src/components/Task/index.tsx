@@ -56,6 +56,30 @@ export function TaskComponent(props: CardProps) {
         />
       </div>
 
+      {props.status !== undefined && (
+        <label className={styles.status} data-status={props.status}>
+          <span className={styles.visuallyHidden}>Task status</span>
+          <select
+            value={props.status}
+            onChange={(event) => {
+              props.onUpdate?.({
+                id: props.id,
+                status: event.target.value as TaskStatus,
+              });
+            }}
+          >
+            {TASK_STATUSES.map((status) => (
+              <option key={status} value={status}>
+                {TASK_STATUS_LABELS[status]}
+              </option>
+            ))}
+          </select>
+          <svg aria-hidden="true" viewBox="0 0 12 8">
+            <path d="m1 1 5 5 5-5" />
+          </svg>
+        </label>
+      )}
+
       <div className={styles.estimates}>
         <label>
           <span>Time</span>
@@ -94,35 +118,13 @@ export function TaskComponent(props: CardProps) {
         )}
       </div>
 
-      {props.status !== undefined && (
-        <label className={styles.status} data-status={props.status}>
-          <span className={styles.visuallyHidden}>Task status</span>
-          <select
-            value={props.status}
-            onChange={(event) => {
-              props.onUpdate?.({
-                id: props.id,
-                status: event.target.value as TaskStatus,
-              });
-            }}
-          >
-            {TASK_STATUSES.map((status) => (
-              <option key={status} value={status}>
-                {TASK_STATUS_LABELS[status]}
-              </option>
-            ))}
-          </select>
-          <svg aria-hidden="true" viewBox="0 0 12 8">
-            <path d="m1 1 5 5 5-5" />
-          </svg>
-        </label>
-      )}
-
-      <TimeDisplay
-        estimatedHours={props.estimatedHours}
-        seconds={props.seconds}
-        todaySeconds={props.todaySeconds}
-      />
+      <div className={styles.time}>
+        <TimeDisplay
+          estimatedHours={props.estimatedHours}
+          seconds={props.seconds}
+          todaySeconds={props.todaySeconds}
+        />
+      </div>
 
       <button
         className={`${styles.toggle} ${props.isActive ? styles.pause : ""}`}
