@@ -20,6 +20,7 @@ type CardProps = {
   seconds: number;
   notes: string;
   estimatedHours: number;
+  todaySeconds: number;
   storyPoints?: number;
   status?: TaskStatus;
   buttons?: React.ReactNode;
@@ -120,6 +121,7 @@ export function TaskComponent(props: CardProps) {
       <TimeDisplay
         estimatedHours={props.estimatedHours}
         seconds={props.seconds}
+        todaySeconds={props.todaySeconds}
       />
 
       <button

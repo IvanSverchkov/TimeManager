@@ -16,10 +16,16 @@
   }
 
   .remaining,
-  .overrun {
+  .overrun,
+  .today {
     font-size: 13px;
     font-weight: 500;
     white-space: nowrap;
+  }
+
+  .today {
+    justify-self: end;
+    color: #586174;
   }
 
   .remaining {
@@ -29,6 +35,10 @@
   .overrun {
     color: #dc2626;
   }
+}
+
+.hasToday {
+  grid-template-columns: minmax(132px, 1fr) 56px 1px 68px;
 }
 
 .divider {

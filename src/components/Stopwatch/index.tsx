@@ -12,6 +12,7 @@ type StopwatchProps = {
   seconds: number;
   notes: string;
   estimatedHours: number;
+  todaySeconds: number;
   storyPoints?: number;
   status?: TaskStatus;
   hidden?: boolean;
@@ -128,6 +129,7 @@ export class Stopwatch extends React.Component<StopwatchProps, State> {
           seconds={displayedSeconds}
           notes={this.props.notes}
           estimatedHours={this.props.estimatedHours}
+          todaySeconds={this.props.todaySeconds}
           storyPoints={this.props.storyPoints}
           onDelete={() => this.props.onDelete?.(this.props.id)}
           onUpdate={this.props.onUpdate}

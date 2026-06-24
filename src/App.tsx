@@ -162,6 +162,7 @@ export const App = memo(function App() {
   const visibleTaskCount = taskTimers.filter(
     (task) => filter === "all" || task.status === filter,
   ).length;
+  const todayKey = getDateKey();
 
   return (
     <main className={styles.page}>
@@ -204,6 +205,7 @@ export const App = memo(function App() {
                     onSecondsChange={handleSecondsChange}
                     onUpdate={updateTask}
                     seconds={task.seconds}
+                    todaySeconds={task.dailySeconds[todayKey] ?? 0}
                   />
                 )}
               </SortableList>
@@ -277,6 +279,7 @@ export const App = memo(function App() {
                     onUpdate={updateTask}
                     seconds={task.seconds}
                     status={task.status}
+                    todaySeconds={task.dailySeconds[todayKey] ?? 0}
                   />
                 )}
               </SortableList>
