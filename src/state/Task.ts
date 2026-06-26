@@ -31,11 +31,18 @@ export type Task = {
   dailySeconds: Record<string, number>;
 }
 
-type State = {
+type TasksState = {
   tasks: Array<Task>;
 }
 
-class ExternalState extends LocalStorageState<State> {}
+export type TaskStatusVisibilityState = {
+  hiddenStatuses: Array<TaskStatus>;
+}
+
+class ExternalState extends LocalStorageState<TasksState> {}
+
+class TaskStatusVisibilityStorage extends LocalStorageState<TaskStatusVisibilityState> {}
 
 // TODO: Переименовать во что-то другое, когда станет понятно, что тут хранится
 export const externalState = new ExternalState();
+export const taskStatusVisibilityStorage = new TaskStatusVisibilityStorage();

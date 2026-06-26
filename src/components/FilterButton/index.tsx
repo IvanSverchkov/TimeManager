@@ -1,16 +1,17 @@
 import cn from "classnames";
+import { Icon } from "@kit/Icon";
 import styles from "./FilterButton.module.scss";
 
 type FilterButtonProps = {
-  active: boolean;
   count: number;
+  isVisible: boolean;
   label: string;
   onClick: () => void;
 };
 
 export function FilterButton({
-  active,
   count,
+  isVisible,
   label,
   onClick,
 }: FilterButtonProps) {
@@ -18,13 +19,14 @@ export function FilterButton({
     <button
       className={cn(
         styles.button,
-        active && styles.active,
+        !isVisible && styles.hidden,
       )}
       onClick={onClick}
       type="button"
     >
-      <span>{label}</span>
+      <span className={styles.label}>{label}</span>
       <strong>{count}</strong>
+      <Icon name={isVisible ? "eye" : "eye-off"} size={18} />
     </button>
   );
 }

@@ -10,15 +10,17 @@ import {
   TASK_STATUS_LABELS,
   TASK_STATUSES,
   externalState,
+  taskStatusVisibilityStorage,
   type Task,
   type TaskStatus,
+  type TaskStatusVisibilityState,
 } from "@state/Task";
 import { getDateKey } from "@utils/time";
 import type { OmitExcept } from "@utils/types";
 
 import styles from "./App.module.scss";
 
-type TimerFilter = "all" | TaskStatus;
+type HiddenTaskStatuses = Partial<Record<TaskStatus, boolean>>;
 
 export const App = memo(function App() {
   const [tasks, setTasks] = useState<Array<Task>>(() => {
@@ -26,7 +28,12 @@ export const App = memo(function App() {
     if (!state?.tasks.length) return [];
     return state.tasks.map(normalizeTask);
   });
-  const [filter, setFilter] = useState<TimerFilter>("all");
+  const [hiddenTaskStatuses, setHiddenTaskStatuses] =
+    useState<HiddenTaskStatuses>(() =>
+      normalizeHiddenTaskStatuses(
+        taskStatusVisibilityStorage.get("hiddenStatuses"),
+      ),
+    );
   const [runningTaskId, setRunningTaskId] = useState<number | null>(null);
 
   const commitTasks = useCallback(
@@ -136,6 +143,29 @@ export const App = memo(function App() {
     [commitTasks],
   );
 
+  const isTaskStatusVisible = useCallback(
+    (status: TaskStatus | undefined) =>
+      status === undefined || hiddenTaskStatuses[status] !== true,
+    [hiddenTaskStatuses],
+  );
+
+  const toggleTaskStatusVisibility = useCallback((status: TaskStatus) => {
+    setHiddenTaskStatuses((currentStatuses) => {
+      const nextStatuses = {
+        ...currentStatuses,
+        [status]: currentStatuses[status] !== true,
+      };
+
+      taskStatusVisibilityStorage.set("hiddenStatuses", {
+        hiddenStatuses: TASK_STATUSES.filter(
+          (taskStatus) => nextStatuses[taskStatus] === true,
+        ),
+      });
+
+      return nextStatuses;
+    });
+  }, []);
+
   const onAddTimerClick = () => {
     createTask({
       name: "",
@@ -159,8 +189,8 @@ export const App = memo(function App() {
 
   const timers = tasks.filter((task) => task.status === undefined);
   const taskTimers = tasks.filter((task) => task.status !== undefined);
-  const visibleTaskCount = taskTimers.filter(
-    (task) => filter === "all" || task.status === filter,
+  const visibleTaskCount = taskTimers.filter((task) =>
+    isTaskStatusVisible(task.status),
   ).length;
   const todayKey = getDateKey();
 
@@ -223,22 +253,16 @@ export const App = memo(function App() {
               <div className={styles.timersHeader}>
                 <h2>Tasks</h2>
                 <div className={styles.filters}>
-                  <FilterButton
-                    active={filter === "all"}
-                    count={taskTimers.length}
-                    label="All"
-                    onClick={() => setFilter("all")}
-                  />
                   {TASK_STATUSES.map((status) => (
                     <FilterButton
-                      active={filter === status}
                       count={
                         taskTimers.filter((task) => task.status === status)
                           .length
                       }
+                      isVisible={hiddenTaskStatuses[status] !== true}
                       key={status}
                       label={TASK_STATUS_LABELS[status]}
-                      onClick={() => setFilter(status)}
+                      onClick={() => toggleTaskStatusVisibility(status)}
                     />
                   ))}
                 </div>
@@ -259,9 +283,7 @@ export const App = memo(function App() {
             <div className={styles.cardContainer}>
               <SortableList
                 getHandleText={(task) => `Move ${task.name || "task"}`}
-                isItemVisible={(task) =>
-                  filter === "all" || task.status === filter
-                }
+                isItemVisible={(task) => isTaskStatusVisible(task.status)}
                 items={taskTimers}
                 onReorder={reorderTasks}
               >
@@ -300,7 +322,7 @@ export const App = memo(function App() {
 
               {taskTimers.length > 0 && visibleTaskCount === 0 && (
                 <div className={styles.filterEmpty}>
-                  No timers match this filter yet.
+                  All task statuses are hidden.
                 </div>
               )}
             </div>
@@ -333,6 +355,20 @@ function normalizeTask(task: Task): Task {
     status: status as TaskStatus | undefined,
     dailySeconds,
   };
+}
+
+function normalizeHiddenTaskStatuses(
+  state: TaskStatusVisibilityState | null,
+): HiddenTaskStatuses {
+  const hiddenStatuses = new Set(
+    (state?.hiddenStatuses ?? []).filter((status): status is TaskStatus =>
+      TASK_STATUSES.includes(status),
+    ),
+  );
+
+  return Object.fromEntries(
+    TASK_STATUSES.map((status) => [status, hiddenStatuses.has(status)]),
+  ) as HiddenTaskStatuses;
 }
 
 function toWholeNumber(value: number): number {

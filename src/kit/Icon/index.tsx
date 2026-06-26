@@ -3,6 +3,8 @@ export type IconName =
   | "check"
   | "clock"
   | "copy"
+  | "eye"
+  | "eye-off"
   | "pause"
   | "play"
   | "plus"
@@ -35,6 +37,20 @@ export function Icon({ name, size = 24, className }: IconProps) {
       <>
         <rect x="8" y="8" width="11" height="12" rx="2" />
         <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2" />
+      </>
+    ),
+    eye: (
+      <>
+        <path d="M2.5 12s3.3-6 9.5-6 9.5 6 9.5 6-3.3 6-9.5 6-9.5-6-9.5-6Z" />
+        <circle cx="12" cy="12" r="3" />
+      </>
+    ),
+    "eye-off": (
+      <>
+        <path d="M3 3l18 18" />
+        <path d="M10.6 5.2A10.6 10.6 0 0 1 12 5c6.2 0 9.5 7 9.5 7a17.4 17.4 0 0 1-3.2 4" />
+        <path d="M15 14.7A3 3 0 0 1 9.3 9" />
+        <path d="M6.7 6.8A17.6 17.6 0 0 0 2.5 12s3.3 7 9.5 7a10 10 0 0 0 4.1-.9" />
       </>
     ),
     pause: (
