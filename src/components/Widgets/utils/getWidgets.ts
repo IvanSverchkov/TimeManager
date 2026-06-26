@@ -23,12 +23,34 @@ function getTodayWidget({ todaySeconds }: WidgetsData): WidgetProps {
   };
 }
 
-function getRequiredWidget({ requiredSeconds }: WidgetsData): WidgetProps {
+function getAllRequiredWidget({ requiredSeconds }: WidgetsData): WidgetProps {
   return {
-    label: "Required",
+    label: "All required",
     icon: "trend",
     tone: "purple",
     value: formatDuration(requiredSeconds),
+  };
+}
+
+function getTasksRequiredWidget({
+  tasksRequiredSeconds,
+}: WidgetsData): WidgetProps {
+  return {
+    label: "Tasks required",
+    icon: "target",
+    tone: "red",
+    value: formatDuration(tasksRequiredSeconds),
+  };
+}
+
+function getTimersRequiredWidget({
+  timersRequiredSeconds,
+}: WidgetsData): WidgetProps {
+  return {
+    label: "Timers required",
+    icon: "clock",
+    tone: "blue",
+    value: formatDuration(timersRequiredSeconds),
   };
 }
 
@@ -62,7 +84,9 @@ export function getWidgets(data: WidgetsData): Array<WidgetProps> {
   return [
     getTodayWidget(data),
     getTotalTrackedWidget(data),
-    getRequiredWidget(data),
+    getAllRequiredWidget(data),
+    getTasksRequiredWidget(data),
+    getTimersRequiredWidget(data),
     getCompletedWidget(data),
     getStoryPointsWidget(data),
   ];
