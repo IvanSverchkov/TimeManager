@@ -2,6 +2,7 @@ import { memo, useCallback, useState } from "react";
 
 import { CopyButton } from "@components/CopyButton";
 import { FilterButton } from "@components/FilterButton";
+import { Overview } from "@components/Overview";
 import { SortableList } from "@components/SortableList";
 import { Widgets } from "@components/Widgets";
 import { Stopwatch } from "@components/Stopwatch";
@@ -173,6 +174,7 @@ export const App = memo(function App() {
       estimatedHours: 0,
       seconds: 0,
       dailySeconds: {},
+      dailyComments: {},
     });
   };
 
@@ -184,8 +186,33 @@ export const App = memo(function App() {
       seconds: 0,
       status: "todo",
       dailySeconds: {},
+      dailyComments: {},
     });
   };
+
+  const handleDailyCommentChange = useCallback(
+    (id: number, dateKey: string, comment: string) => {
+      commitTasks((currentTasks) =>
+        currentTasks.map((task) => {
+          if (task.id !== id) return task;
+
+          const dailyComments = { ...task.dailyComments };
+
+          if (comment.trim() === "") {
+            delete dailyComments[dateKey];
+          } else {
+            dailyComments[dateKey] = comment;
+          }
+
+          return {
+            ...task,
+            dailyComments,
+          };
+        }),
+      );
+    },
+    [commitTasks],
+  );
 
   const timers = tasks.filter((task) => task.status === undefined);
   const taskTimers = tasks.filter((task) => task.status !== undefined);
@@ -327,6 +354,18 @@ export const App = memo(function App() {
               )}
             </div>
           </section>
+
+          <section className={styles.timersSection}>
+            <div className={styles.sectionHeader}>
+              <h2>Overview</h2>
+            </div>
+
+            <Overview
+              tasks={tasks}
+              todayKey={todayKey}
+              onDailyCommentChange={handleDailyCommentChange}
+            />
+          </section>
         </div>
       </section>
     </main>
@@ -341,6 +380,7 @@ function normalizeTask(task: Task): Task {
   const dailySeconds = task.dailySeconds ?? {
     [getDateKey()]: Math.max(0, Number(task.seconds) || 0),
   };
+  const dailyComments = task.dailyComments ?? {};
 
   return {
     ...task,
@@ -354,6 +394,7 @@ function normalizeTask(task: Task): Task {
     seconds: Math.max(0, Number(task.seconds) || 0),
     status: status as TaskStatus | undefined,
     dailySeconds,
+    dailyComments,
   };
 }
 

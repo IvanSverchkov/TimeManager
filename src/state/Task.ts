@@ -25,10 +25,11 @@ export type Task = {
   name: string;
   notes: string;
   estimatedHours: number;
-  storyPoints?: number;
   seconds: number;
-  status?: TaskStatus;
   dailySeconds: Record<string, number>;
+  dailyComments: Record<string, string>;
+  storyPoints?: number;
+  status?: TaskStatus;
 }
 
 type TasksState = {
