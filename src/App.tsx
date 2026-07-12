@@ -224,10 +224,6 @@ export const App = memo(function App() {
   return (
     <main className={styles.page}>
       <section className={styles.appShell}>
-        <header className={styles.header}>
-          <h1>Time Manager</h1>
-        </header>
-
         <div className={styles.content}>
           <Widgets tasks={tasks} />
 
