@@ -10,7 +10,9 @@ export type WidgetsData = {
   completedTasks: number;
   completedStoryPoints: number;
   requiredSeconds: number;
+  tasksTrackedSeconds: number;
   tasksRequiredSeconds: number;
+  timersTrackedSeconds: number;
   timersRequiredSeconds: number;
   totalStoryPoints: number;
   todaySeconds: number;
@@ -25,13 +27,22 @@ export function getWidgetsData({ tasks }: GetWidgetsDataParams): WidgetsData {
   let completedTasks = 0;
   let completedStoryPoints = 0;
   let requiredSeconds = 0;
+  let tasksTrackedSeconds = 0;
   let tasksRequiredSeconds = 0;
+  let timersTrackedSeconds = 0;
   let timersRequiredSeconds = 0;
   let totalStoryPoints = 0;
 
   tasks.forEach((task) => {
     totalSeconds += task.seconds;
     todaySeconds += task.dailySeconds[todayKey] ?? 0;
+
+    if (task.status === undefined) {
+      timersTrackedSeconds += task.seconds;
+    } else {
+      tasksTrackedSeconds += task.seconds;
+    }
+
     if (task.status !== "done") {
       const taskRequiredSeconds = Math.max(
         task.estimatedHours * 60 * 60 - task.seconds,
@@ -60,7 +71,9 @@ export function getWidgetsData({ tasks }: GetWidgetsDataParams): WidgetsData {
     completedStoryPoints,
     requiredSeconds,
     taskCount: tasks.filter((task) => task.status !== undefined).length,
+    tasksTrackedSeconds,
     tasksRequiredSeconds,
+    timersTrackedSeconds,
     timersRequiredSeconds,
     todaySeconds,
     totalStoryPoints,

@@ -33,17 +33,25 @@ function getAllRequiredWidget({ requiredSeconds }: WidgetsData): WidgetProps {
 }
 
 function getTasksRequiredWidget({
+  requiredSeconds,
   tasksRequiredSeconds,
+  timersRequiredSeconds,
 }: WidgetsData): WidgetProps {
   return {
     label: "Tasks required",
     icon: "target",
     tone: "red",
     value: formatDuration(tasksRequiredSeconds),
+    percentage:
+      timersRequiredSeconds > 0 && tasksRequiredSeconds > 0
+        ? formatPercentage(tasksRequiredSeconds, requiredSeconds)
+        : undefined,
   };
 }
 
 function getTimersRequiredWidget({
+  requiredSeconds,
+  tasksRequiredSeconds,
   timersRequiredSeconds,
 }: WidgetsData): WidgetProps {
   return {
@@ -51,7 +59,50 @@ function getTimersRequiredWidget({
     icon: "clock",
     tone: "blue",
     value: formatDuration(timersRequiredSeconds),
+    percentage:
+      tasksRequiredSeconds > 0 && timersRequiredSeconds > 0
+        ? formatPercentage(timersRequiredSeconds, requiredSeconds)
+        : undefined,
   };
+}
+
+function getTasksTrackedWidget({
+  tasksTrackedSeconds,
+  timersTrackedSeconds,
+  totalSeconds,
+}: WidgetsData): WidgetProps {
+  return {
+    label: "Tasks tracked",
+    icon: "target",
+    tone: "red",
+    value: formatDuration(tasksTrackedSeconds),
+    percentage:
+      timersTrackedSeconds > 0 && tasksTrackedSeconds > 0
+        ? formatPercentage(tasksTrackedSeconds, totalSeconds)
+        : undefined,
+    gridColumn: 4,
+  };
+}
+
+function getTimersTrackedWidget({
+  tasksTrackedSeconds,
+  timersTrackedSeconds,
+  totalSeconds,
+}: WidgetsData): WidgetProps {
+  return {
+    label: "Timers tracked",
+    icon: "clock",
+    tone: "blue",
+    value: formatDuration(timersTrackedSeconds),
+    percentage:
+      tasksTrackedSeconds > 0 && timersTrackedSeconds > 0
+        ? formatPercentage(timersTrackedSeconds, totalSeconds)
+        : undefined,
+  };
+}
+
+function formatPercentage(seconds: number, totalSeconds: number): string {
+  return `${Math.round((seconds / totalSeconds) * 100)}%`;
 }
 
 function getCompletedWidget({
@@ -89,5 +140,7 @@ export function getWidgets(data: WidgetsData): Array<WidgetProps> {
     getTimersRequiredWidget(data),
     getCompletedWidget(data),
     getStoryPointsWidget(data),
+    getTasksTrackedWidget(data),
+    getTimersTrackedWidget(data),
   ];
 }

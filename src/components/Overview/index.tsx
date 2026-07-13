@@ -36,6 +36,7 @@ type DayMetricData = {
   icon: "clock" | "target" | "trend";
   tone: "blue" | "purple" | "red";
   seconds: number;
+  percentage?: string;
 };
 
 export const Overview = memo(function Overview({
@@ -67,6 +68,7 @@ export const Overview = memo(function Overview({
                   <DayMetric
                     icon={metric.icon}
                     key={metric.key}
+                    percentage={metric.percentage}
                     tone={metric.tone}
                     value={formatOverviewDuration(metric.seconds)}
                   />
@@ -87,6 +89,9 @@ export const Overview = memo(function Overview({
                   <span className={styles.entryTime}>
                     <Icon name="clock" size={15} />
                     {formatOverviewDuration(seconds)}
+                    <span className={styles.entryPercentage}>
+                      {formatOverviewPercentage(seconds, section.totalSeconds)}
+                    </span>
                   </span>
                 </div>
 
@@ -119,6 +124,9 @@ export const Overview = memo(function Overview({
 });
 
 function getDayMetrics(section: OverviewSection): Array<DayMetricData> {
+  const showTypePercentages =
+    section.timersSeconds > 0 && section.tasksSeconds > 0;
+
   const metrics: Array<DayMetricData> = [
     {
       key: "total",
@@ -131,12 +139,21 @@ function getDayMetrics(section: OverviewSection): Array<DayMetricData> {
       icon: "clock",
       tone: "blue",
       seconds: section.timersSeconds,
+      percentage: showTypePercentages
+        ? formatOverviewPercentage(
+            section.timersSeconds,
+            section.totalSeconds,
+          )
+        : undefined,
     },
     {
       key: "tasks",
       icon: "target",
       tone: "red",
       seconds: section.tasksSeconds,
+      percentage: showTypePercentages
+        ? formatOverviewPercentage(section.tasksSeconds, section.totalSeconds)
+        : undefined,
     },
   ];
 
@@ -145,10 +162,12 @@ function getDayMetrics(section: OverviewSection): Array<DayMetricData> {
 
 function DayMetric({
   icon,
+  percentage,
   tone,
   value,
 }: {
   icon: "clock" | "target" | "trend";
+  percentage?: string;
   tone: "blue" | "purple" | "red";
   value: string;
 }) {
@@ -158,6 +177,9 @@ function DayMetric({
         <Icon name={icon} size={14} />
       </span>
       <span>{value}</span>
+      {percentage !== undefined && (
+        <span className={styles.entryPercentage}>{percentage}</span>
+      )}
     </span>
   );
 }
@@ -247,6 +269,14 @@ function formatDateTitle(dateKey: string, todayKey: string): string {
 function formatOverviewDuration(seconds: number): string {
   if (seconds > 0 && seconds < 60) return "< 1 min";
   return formatDuration(seconds);
+}
+
+function formatOverviewPercentage(
+  seconds: number,
+  totalSeconds: number,
+): string {
+  if (totalSeconds <= 0) return "0%";
+  return `${Math.round((seconds / totalSeconds) * 100)}%`;
 }
 
 function parseDateKey(dateKey: string): Date {
