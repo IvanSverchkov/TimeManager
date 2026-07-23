@@ -216,6 +216,12 @@
     background: #fff9eb;
   }
 
+  &[data-status="waiting"] {
+    border-color: #cfd5df;
+    color: #596579;
+    background: #f6f7f9;
+  }
+
   &[data-status="review"] {
     border-color: #d9caff;
     color: #7047df;
